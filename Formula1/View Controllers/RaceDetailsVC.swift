@@ -79,6 +79,7 @@ class RaceDetailsVC: UITableViewController {
             cell.accessoryType = .disclosureIndicator
         } else {
             let driver = drivers[indexPath.row]
+            let position = "P\(indexPath.row + 1)"
             
             var number = ""
             if let permanentNumber = driver.permanentNumber {
@@ -87,7 +88,7 @@ class RaceDetailsVC: UITableViewController {
             let fullName = driver.givenName + " " + driver.familyName
             
             cell.fill(subtitle: times[indexPath.row],
-                      text: (number, isBold: true), (fullName, isBold: false))
+                      text: (position, isBold: true), (fullName, isBold: false), (number, isBold: true))
         }
         
         return cell
@@ -107,7 +108,7 @@ class RaceDetailsVC: UITableViewController {
     
     private func showWebPage(urlString: String) {
         if let url = URL(string: urlString) {
-            let webPageVC = WebPageVC(url: url)
+            let webPageVC = WebPageVC(show: url)
             navigationController?.pushViewController(webPageVC, animated: true)
         }
     }

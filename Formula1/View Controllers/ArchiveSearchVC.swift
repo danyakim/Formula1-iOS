@@ -1,68 +1,71 @@
 //
-//  DriversVC.swift
+//  ArchiveSearchVC.swift
 //  Formula1
 //
-//  Created by Daniil Kim on 01.06.2021.
+//  Created by Daniil Kim on 05.06.2021.
 //
 
 import UIKit
 
-class DriversVC: UITableViewController {
+class ArchiveSearchVC: UIViewController {
+
+    // MARK: - UIViews
+    
+    private let tableView = UITableView()
+    
+    private let pickerView = UIPickerView()
+    private let yearTextField = UITextField()
+    private let positionTextField = UITextField()
     
     // MARK: - Properties
     
-    var drivers = [Driver]()
-    var races = [Race]()
+    private let dataSource = DriversTableViewDataSource()
     
-    let currentYear = Calendar.current.component(.year, from: Date())
+    private let currentYear = Calendar.current.component(.year, from: Date())
     
-    var years: [String] {
+    private var chosenYear: String?
+    private var chosenPosition: String?
+    
+    private var years: [String] {
+        guard currentYear > 1950 else { return [] }
+        
         var years = [String]()
-        
-        guard currentYear > 1950 else { return years }
-        
         for year in (1950...currentYear).reversed() {
             years.append(String(year))
         }
         return years
     }
     
-    var positions: [String] {
+    private var positions: [String] {
         var positions = [String]()
-        
         for pos in 1...20 {
             positions.append(String(pos))
         }
         return positions
     }
     
-    // MARK: - UIViews
-    
-    lazy var pickerView = UIPickerView()
-    
-    lazy var yearTextField = UITextField()
-    lazy var positionTextField = UITextField()
-    
-    var chosenYear: String?
-    var chosenPosition: String?
-    
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        setupTableView()
+        setupLabels()
         setupPickerView()
         setupPickerViewToolbar()
-        
-        if navigationController?.tabBarItem.tag == K.Tags.firstScreen {
-            title = String(currentYear) + " Winners"
-            getCurrentWinners()
-        } else {
-            setupLabels()
-        }
     }
     
     // MARK: - Private Methods
+    
+    private func setupTableView() {
+        dataSource.presenter = navigationController
+        
+        tableView.dataSource = dataSource
+        tableView.delegate = dataSource
+        
+        view.addSubview(tableView)
+        tableView.frame = view.bounds
+    }
     
     private func setupPickerView() {
         pickerView.dataSource = self
@@ -93,23 +96,28 @@ class DriversVC: UITableViewController {
         positionTextField.inputAccessoryView = toolbar
     }
     
-    private func getCurrentWinners() {
-        ErgastAPI.shared.getCurrentWinners { result in
-            switch result {
-            case .failure(let error):
-                print("*** Error getting drivers: ", error)
-            case .success(let jsonResponse):
-                print("Got response")
-                let details = jsonResponse.getDetails()
-                for detail in details {
-                    self.drivers.append(detail.driver)
-                    self.races.append(detail.race)
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
+    private func setupLabels() {
+        
+        let seasonLabel = UILabel()
+        seasonLabel.text = "Season:"
+        seasonLabel.font = .boldSystemFont(ofSize: 18)
+        yearTextField.borderStyle = .roundedRect
+        yearTextField.placeholder = String(currentYear)
+        let seasonStack = UIStackView(arrangedSubviews: [seasonLabel, yearTextField])
+        seasonStack.configure(axis: .horizontal, alignment: .center, spacing: 10)
+        
+        let positionLabel = UILabel()
+        positionLabel.text = "P"
+        positionLabel.font = .boldSystemFont(ofSize: 18)
+        positionTextField.borderStyle = .roundedRect
+        positionTextField.placeholder = "1"
+        let positionStack = UIStackView(arrangedSubviews: [positionLabel, positionTextField])
+        positionStack.configure(axis: .horizontal, alignment: .center, spacing: 10)
+        
+        let labelsContainer = UIStackView(arrangedSubviews: [seasonStack, positionStack])
+        labelsContainer.configure(axis: .horizontal, alignment: .center, spacing: 20)
+        
+        navigationItem.titleView = labelsContainer
     }
     
     private func getDrivers(at position: String, year: String) {
@@ -122,30 +130,14 @@ class DriversVC: UITableViewController {
                 print("Got response")
                 let details = jsonResponse.getDetails()
                 for detail in details {
-                    self.drivers.append(detail.driver)
-                    self.races.append(detail.race)
+                    self.dataSource.drivers.append(detail.driver)
+                    self.dataSource.races.append(detail.race)
                 }
                 DispatchQueue.main.async {
                     self.tableView.reloadData()
                 }
             }
         }
-    }
-    
-    private func setupLabels() {
-        let labelsContainer = UIStackView(arrangedSubviews: [yearTextField, positionTextField])
-        
-        labelsContainer.axis = .horizontal
-        labelsContainer.alignment = .center
-        labelsContainer.spacing = 20
-        
-        yearTextField.placeholder = "year"
-        yearTextField.borderStyle = .roundedRect
-        
-        positionTextField.placeholder = "pos"
-        positionTextField.borderStyle = .roundedRect
-        
-        navigationItem.titleView = labelsContainer
     }
     
     // MARK: - Selector Methods
@@ -158,8 +150,8 @@ class DriversVC: UITableViewController {
     
     @objc
     private func done() {
-        drivers = []
-        races = []
+        dataSource.drivers = []
+        dataSource.races = []
         
         if let year = chosenYear,
            let position = chosenPosition {
@@ -174,42 +166,11 @@ class DriversVC: UITableViewController {
         positionTextField.resignFirstResponder()
     }
     
-    // MARK: - Table view delegate
-    
-    override func tableView(_ tableView: UITableView,
-                            numberOfRowsInSection section: Int) -> Int {
-        return drivers.count
-    }
-    
-    override func tableView(_ tableView: UITableView,
-                            cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        cell.accessoryType = .disclosureIndicator
-        
-        let driver = drivers[indexPath.row]
-        let race = races[indexPath.row]
-        cell.fill(subtitle: race.raceName,
-                  text: (driver.givenName, isBold: false),
-                  (driver.familyName, isBold: false),
-                  (driver.permanentNumber ?? "", isBold: true))
-        
-        return cell
-    }
-    
-    override func tableView(_ tableView: UITableView,
-                            didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let raceDetailsVC = RaceDetailsVC()
-        raceDetailsVC.race =  races[indexPath.row]
-        navigationController?.pushViewController(raceDetailsVC, animated: true)
-    }
-    
 }
 
 // MARK: - Picker View
 
-extension DriversVC: UIPickerViewDataSource, UIPickerViewDelegate {
+extension ArchiveSearchVC: UIPickerViewDataSource, UIPickerViewDelegate {
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 2

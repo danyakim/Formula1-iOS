@@ -18,18 +18,16 @@ class ErgastAPI {
     
     static let shared = ErgastAPI()
     
-    let defaultSession = URLSession(configuration: .default)
-    
     // MARK: - Methods
     
-    public func getCurrentWinners(completion: @escaping (Result<JSONResponse, Error>) -> Void) {
+    public func getCurrentWinners(completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
         let urlString = "https://ergast.com/api/f1/current/results/1.json"
         
         fetchData(from: urlString, completion: completion)
     }
     
     public func getResults(of race: Race,
-                           completion: @escaping (Result<JSONResponse, Error>) -> Void) {
+                           completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
         let urlString = "https://ergast.com/api/f1/\(race.season)/\(race.round)/results.json"
         
         fetchData(from: urlString, completion: completion)
@@ -37,7 +35,7 @@ class ErgastAPI {
     
     public func getDrivers(at position: String,
                            year: String,
-                           completion: @escaping (Result<JSONResponse, Error>) -> Void) {
+                           completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
         let urlString = "https://ergast.com/api/f1/\(year)/results/\(position).json"
         
         fetchData(from: urlString, completion: completion)
@@ -45,7 +43,7 @@ class ErgastAPI {
     
     // MARK: - Private Methods
     
-    private func fetchData(from urlString: String, completion: @escaping (Result<JSONResponse, Error>) -> Void) {
+    private func fetchData(from urlString: String, completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
         
         guard let url = URL(string: urlString) else {
             return completion(.failure(APIError.incorrectURL(urlString)))
@@ -61,7 +59,7 @@ class ErgastAPI {
             }
             
             let decoder = JSONDecoder()
-            if let jsonResponse = try? decoder.decode(JSONResponse.self, from: data) {
+            if let jsonResponse = try? decoder.decode(ErgastResponse.self, from: data) {
                 return completion(.success(jsonResponse))
             }
             return completion(.failure(APIError.errorParsingJSON))

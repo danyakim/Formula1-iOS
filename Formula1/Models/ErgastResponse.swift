@@ -1,12 +1,14 @@
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
 //
-//   let welcome = try? newJSONDecoder().decode(JSONResponse.self, from: jsonData)
+//  ErgastResponse.swift
+//  Formula1
+//
+//  Created by Daniil Kim on 01.06.2021.
+//
 
 import Foundation
 
 // MARK: - Response
-struct JSONResponse: Codable {
+struct ErgastResponse: Codable {
     let mrData: MRData
 
     enum CodingKeys: String, CodingKey {
@@ -95,8 +97,10 @@ struct Race: Codable {
             var status = result.status
             if !result.status.contains("Lap"),
                !result.status.contains("Accident"),
-               !result.status.contains("Injured") {
-                status.append(" failure")
+               !result.status.contains("Injured"),
+               !result.status.contains("Retired"),
+               !result.status.contains("Collision") {
+                status.append(" issue")
             }
             times.append(result.time?.time ?? status)
         }
@@ -119,14 +123,14 @@ struct Circuit: Codable {
 
 // MARK: - Result
 private struct Result: Codable {
-    let number, position, positionText, points: String
+    let number, position, positionText: String
     let driver: Driver
     let grid, laps: String
     let status: String
     let time: ResultTime?
 
     enum CodingKeys: String, CodingKey {
-        case number, position, positionText, points
+        case number, position, positionText
         case driver = "Driver"
         case grid, laps, status
         case time = "Time"
@@ -148,5 +152,5 @@ struct Driver: Codable {
 
 // MARK: - ResultTime
 struct ResultTime: Codable {
-    let millis, time: String
+    let time: String
 }

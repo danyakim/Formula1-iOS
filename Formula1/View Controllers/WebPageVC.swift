@@ -16,7 +16,7 @@ class WebPageVC: UIViewController {
     
     // MARK: - Lifecycle
     
-    required init(url: URL) {
+    required init(show url: URL) {
         self.url = url
         
         super.init(nibName: nil, bundle: nil)

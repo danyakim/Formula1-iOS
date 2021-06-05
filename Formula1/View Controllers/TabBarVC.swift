@@ -19,11 +19,11 @@ class TabBarVC: UITabBarController {
     
     private func setupViewControllers() {
         viewControllers = [
-            createNavigationController(for: DriversVC(),
+            createNavigationController(for: WinnersVC(),
                                        title: "Winners",
                                        image: K.Images.tabBarItem1,
                                        tag: K.Tags.firstScreen),
-            createNavigationController(for: DriversVC(),
+            createNavigationController(for: ArchiveSearchVC(),
                                        title: "Archive",
                                        image: K.Images.tabBarItem2,
                                        tag: K.Tags.secondScreen)
