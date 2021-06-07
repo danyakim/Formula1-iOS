@@ -14,9 +14,4 @@ struct K {
         static let tabBarItem2 = UIImage(systemName: "archivebox") ?? UIImage()
     }
     
-    struct Tags {
-        static let firstScreen = 1
-        static let secondScreen = 2
-    }
-    
 }

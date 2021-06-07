@@ -6,31 +6,33 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class ArchiveSearchVC: UIViewController {
 
     // MARK: - UIViews
     
-    private let tableView = UITableView()
-    
     private let pickerView = UIPickerView()
     private let yearTextField = UITextField()
     private let positionTextField = UITextField()
     
+    // MARK: - Driver Standings Properties
+    
+    internal let tableView = UITableView()
+    internal let driversVM = DriverStandingsVM()
+    internal let disposeBag = DisposeBag()
+    
     // MARK: - Properties
-    
-    private let dataSource = DriversTableViewDataSource()
-    
-    private let currentYear = Calendar.current.component(.year, from: Date())
     
     private var chosenYear: String?
     private var chosenPosition: String?
     
     private var years: [String] {
-        guard currentYear > 1950 else { return [] }
+        guard driversVM.currentYear > 1950 else { return [] }
         
         var years = [String]()
-        for year in (1950...currentYear).reversed() {
+        for year in (1950...driversVM.currentYear).reversed() {
             years.append(String(year))
         }
         return years
@@ -48,24 +50,16 @@ class ArchiveSearchVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        setupTableView()
+        
+        setupReactiveTableView()
+        setupAlerts()
+        
         setupLabels()
         setupPickerView()
         setupPickerViewToolbar()
     }
     
-    // MARK: - Private Methods
-    
-    private func setupTableView() {
-        dataSource.presenter = navigationController
-        
-        tableView.dataSource = dataSource
-        tableView.delegate = dataSource
-        
-        view.addSubview(tableView)
-        tableView.frame = view.bounds
-    }
+    // MARK: - Setup Views
     
     private func setupPickerView() {
         pickerView.dataSource = self
@@ -102,9 +96,9 @@ class ArchiveSearchVC: UIViewController {
         seasonLabel.text = "Season:"
         seasonLabel.font = .boldSystemFont(ofSize: 18)
         yearTextField.borderStyle = .roundedRect
-        yearTextField.placeholder = String(currentYear)
+        yearTextField.placeholder = String(driversVM.currentYear)
         let seasonStack = UIStackView(arrangedSubviews: [seasonLabel, yearTextField])
-        seasonStack.configure(axis: .horizontal, alignment: .center, spacing: 10)
+        seasonStack.configure(axis: .horizontal, alignment: .center, spacing: 5)
         
         let positionLabel = UILabel()
         positionLabel.text = "P"
@@ -112,32 +106,12 @@ class ArchiveSearchVC: UIViewController {
         positionTextField.borderStyle = .roundedRect
         positionTextField.placeholder = "1"
         let positionStack = UIStackView(arrangedSubviews: [positionLabel, positionTextField])
-        positionStack.configure(axis: .horizontal, alignment: .center, spacing: 10)
+        positionStack.configure(axis: .horizontal, alignment: .center, spacing: 5)
         
         let labelsContainer = UIStackView(arrangedSubviews: [seasonStack, positionStack])
-        labelsContainer.configure(axis: .horizontal, alignment: .center, spacing: 20)
+        labelsContainer.configure(axis: .horizontal, alignment: .center, spacing: 15)
         
         navigationItem.titleView = labelsContainer
-    }
-    
-    private func getDrivers(at position: String, year: String) {
-        ErgastAPI.shared.getDrivers(at: position,
-                                    year: year) { result in
-            switch result {
-            case .failure(let error):
-                print("*** Error getting drivers year: \(year) at position: \(position): ", error)
-            case .success(let jsonResponse):
-                print("Got response")
-                let details = jsonResponse.getDetails()
-                for detail in details {
-                    self.dataSource.drivers.append(detail.driver)
-                    self.dataSource.races.append(detail.race)
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
     }
     
     // MARK: - Selector Methods
@@ -150,16 +124,13 @@ class ArchiveSearchVC: UIViewController {
     
     @objc
     private func done() {
-        dataSource.drivers = []
-        dataSource.races = []
-        
         if let year = chosenYear,
            let position = chosenPosition {
             
             yearTextField.text = chosenYear
             positionTextField.text = chosenPosition
             
-            getDrivers(at: position, year: year)
+            driversVM.getDrivers(at: position, year: year)
         }
         
         yearTextField.resignFirstResponder()
@@ -167,6 +138,10 @@ class ArchiveSearchVC: UIViewController {
     }
     
 }
+
+// MARK: - Driver Standings TableView
+
+extension ArchiveSearchVC: DriverStandingsTableView { }
 
 // MARK: - Picker View
 

@@ -6,14 +6,33 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import RxDataSources
 
-class RaceDetailsVC: UITableViewController {
-
+class RaceDetailsVC: UIViewController {
+    
+    // MARK: - UIViews
+    
+    private let tableView = UITableView()
+    
     // MARK: - Properties
     
-    var race: Race!
-    var drivers = [Driver]()
-    var times = [String]()
+    private var race: Race
+    private var raceDetailsVM = RaceDetailsVM()
+    private let disposeBag = DisposeBag()
+    
+    // MARK: - Initializers
+    
+    required init(race: Race) {
+        self.race = race
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - View Lifecycle
     
@@ -21,24 +40,8 @@ class RaceDetailsVC: UITableViewController {
         super.viewDidLoad()
         
         title = "Details"
-        
-        ErgastAPI.shared.getResults(of: race) { result in
-            switch result {
-            case .failure(let error):
-                print("*** Error getting race results: ", error)
-            case .success(let jsonResponse):
-                print("Got race results")
-                if let details = jsonResponse.getRaceDetails() {
-                    self.drivers = details.drivers
-                    self.times = details.times
-                }
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-        }
-        drivers = race.getAllDrivers()
-        times = race.getTimes()
+        setupReactiveTableView()
+        raceDetailsVM.getDetails(of: race)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,61 +50,51 @@ class RaceDetailsVC: UITableViewController {
         navigationController?.tabBarController?.tabBar.isHidden = false
     }
     
-    // MARK: - Table view data source
+    // MARK: - Reactive Table View
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 { return 1 }
-        return drivers.count
-    }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if section == 1 {
-            return "Results"
-        }
-        return nil
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 { return 88 }
-        return 66
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+    private func setupReactiveTableView() {
+        view.addSubview(tableView)
+        tableView.frame = view.bounds
         
-        if indexPath.section == 0 {
-            let title = race.season + " - " + race.round
-            cell.fill(subtitle: race.raceName + "   " + race.date, fontSizeMod: 4, text: (value: title, isBold: true))
-            cell.accessoryType = .disclosureIndicator
-        } else {
-            let driver = drivers[indexPath.row]
-            let position = "P\(indexPath.row + 1)"
+        setupDataSource()
+        setupTapHandling()
+    }
+    
+    private func setupDataSource() {
+        let dataSource = RxTableViewSectionedReloadDataSource<SectionOfResult>(configureCell: { _, _, indexPath, cellModel in
+            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
             
-            var number = ""
-            if let permanentNumber = driver.permanentNumber {
-                number = permanentNumber + " "
+            switch cellModel {
+            case .title(let race):
+                self.configureTitle(cell: cell, with: race)
+            case .position(let result):
+                self.configureDriverResult(cell: cell,
+                                           driver: result.driver,
+                                           time: result.time,
+                                           row: indexPath.row)
             }
-            let fullName = driver.givenName + " " + driver.familyName
             
-            cell.fill(subtitle: times[indexPath.row],
-                      text: (position, isBold: true), (fullName, isBold: false), (number, isBold: true))
-        }
+            return cell
+        }, titleForHeaderInSection: { dataSource, index in
+            return dataSource.sectionModels[index].model
+        })
         
-        return cell
+        tableView.rx.setDelegate(self).disposed(by: disposeBag)
+        raceDetailsVM.sections.bind(to: tableView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 {
-            showWebPage(urlString: race.url)
-        } else {
-            let driver = drivers[indexPath.row]
-            showWebPage(urlString: driver.url)
-        }
+    private func setupTapHandling() {
+        tableView.rx.modelSelected(CellModel.self).subscribe { cellModel in
+            self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+            switch cellModel.element {
+            case .title(let race):
+                self.showWebPage(urlString: race.url)
+            case .position(let driverResult):
+                self.showWebPage(urlString: driverResult.driver.url)
+            default:
+                print("Unknown case of CellModel")
+            }
+        }.disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
@@ -112,4 +105,33 @@ class RaceDetailsVC: UITableViewController {
             navigationController?.pushViewController(webPageVC, animated: true)
         }
     }
+    
+    private func configureTitle(cell: UITableViewCell, with race: Race) {
+        let title = self.race.season + " - " + self.race.round
+        cell.fill(subtitle: self.race.raceName + "   " + self.race.date, fontSizeMod: 4, text: (value: title, isBold: true))
+        cell.accessoryType = .disclosureIndicator
+    }
+    
+    private func configureDriverResult(cell: UITableViewCell, driver: Driver, time: String, row: Int) {
+        let position = "P\(row + 1)"
+        
+        var number = ""
+        if let permanentNumber = driver.permanentNumber {
+            number = permanentNumber + " "
+        }
+        let fullName = driver.givenName + " " + driver.familyName
+        
+        cell.fill(subtitle: time,
+                  text: (position, isBold: true), (fullName, isBold: false), (number, isBold: true))
+    }
+    
+}
+
+extension RaceDetailsVC: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 { return 88 }
+        return 66
+    }
+    
 }

@@ -14,7 +14,7 @@ class WebPageVC: UIViewController {
     
     var url: URL
     
-    // MARK: - Lifecycle
+    // MARK: - Initializers
     
     required init(show url: URL) {
         self.url = url
@@ -25,6 +25,8 @@ class WebPageVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()

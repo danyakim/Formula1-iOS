@@ -6,57 +6,31 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class WinnersVC: UIViewController {
     
-    // MARK: - UIViews
+    // MARK: - DriverStandings Properties
     
-    private let tableView = UITableView()
-    
-    // MARK: - Properties
-    
-    private let dataSource = DriversTableViewDataSource()
+    internal let tableView = UITableView()
+    internal let driversVM = DriverStandingsVM()
+    internal let disposeBag = DisposeBag()
     
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupTableView()
-        getCurrentWinners()
-    }
-    
-    // MARK: - Private Methods
-    
-    private func setupTableView() {
-        dataSource.presenter = navigationController
+        title = "\(driversVM.currentYear) Winners"
         
-        tableView.dataSource = dataSource
-        tableView.delegate = dataSource
-        
-        view.addSubview(tableView)
-        tableView.frame = view.bounds
-    }
-    
-    private func getCurrentWinners() {
-        ErgastAPI.shared.getCurrentWinners { result in
-            switch result {
-            case .failure(let error):
-                print("*** Error getting drivers: ", error)
-            case .success(let jsonResponse):
-                print("Got response")
-                let details = jsonResponse.getDetails()
-                guard !details.isEmpty else { return }
-                for detail in details {
-                    self.dataSource.drivers.append(detail.driver)
-                    self.dataSource.races.append(detail.race)
-                }
-                DispatchQueue.main.async {
-                    self.title = details.first!.race.season + " Winners"
-                    self.tableView.reloadData()
-                }
-            }
-        }
+        setupReactiveTableView()
+        setupAlerts()
+        driversVM.getCurrentWinners()
     }
     
 }
+
+// MARK: - Driver Standings Table View
+
+extension WinnersVC: DriverStandingsTableView { }
