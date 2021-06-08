@@ -31,6 +31,6 @@ class WinnersVC: UIViewController {
     
 }
 
-// MARK: - Driver Standings Table View
+// MARK: - DriverStandingsVC
 
-extension WinnersVC: DriverStandingsTableView { }
+extension WinnersVC: DriverStandingsVC { }

@@ -14,20 +14,22 @@ enum APIError: Error {
     case errorParsingJSON
 }
 
+typealias ErgastResult = Result<ErgastResponse, Error>
+
 class ErgastAPI {
     
     static let shared = ErgastAPI()
     
     // MARK: - Methods
     
-    public func getCurrentWinners(completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
+    public func getCurrentWinners(completion: @escaping (ErgastResult) -> Void) {
         let urlString = "https://ergast.com/api/f1/current/results/1.json"
         
         fetchData(from: urlString, completion: completion)
     }
     
     public func getResults(of race: Race,
-                           completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
+                           completion: @escaping (ErgastResult) -> Void) {
         let urlString = "https://ergast.com/api/f1/\(race.season)/\(race.round)/results.json"
         
         fetchData(from: urlString, completion: completion)
@@ -35,7 +37,7 @@ class ErgastAPI {
     
     public func getDrivers(at position: String,
                            year: String,
-                           completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
+                           completion: @escaping (ErgastResult) -> Void) {
         let urlString = "https://ergast.com/api/f1/\(year)/results/\(position).json"
         
         fetchData(from: urlString, completion: completion)
@@ -43,7 +45,7 @@ class ErgastAPI {
     
     // MARK: - Private Methods
     
-    private func fetchData(from urlString: String, completion: @escaping (Result<ErgastResponse, Error>) -> Void) {
+    private func fetchData(from urlString: String, completion: @escaping (ErgastResult) -> Void) {
         
         guard let url = URL(string: urlString) else {
             return completion(.failure(APIError.incorrectURL(urlString)))

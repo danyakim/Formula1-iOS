@@ -84,8 +84,13 @@ class RaceDetailsVC: UIViewController {
     }
     
     private func setupTapHandling() {
-        tableView.rx.modelSelected(CellModel.self).subscribe { cellModel in
-            self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+        tableView.rx.modelSelected(CellModel.self).subscribe { [weak self] cellModel in
+            guard let self = self else { return }
+            
+            if let indexPath = self.tableView.indexPathForSelectedRow {
+                self.tableView.deselectRow(at: indexPath, animated: true)
+            }
+            
             switch cellModel.element {
             case .title(let race):
                 self.showWebPage(urlString: race.url)
@@ -107,8 +112,11 @@ class RaceDetailsVC: UIViewController {
     }
     
     private func configureTitle(cell: UITableViewCell, with race: Race) {
-        let title = self.race.season + " - " + self.race.round
-        cell.fill(subtitle: self.race.raceName + "   " + self.race.date, fontSizeMod: 4, text: (value: title, isBold: true))
+        let title = race.season + " - " + race.round
+        TableViewHelper.updateCell(cell: cell,
+                                   subtitle: self.race.raceName + "   " + race.date,
+                                   fontSizeMod: 4,
+                                   text: (value: title, isBold: true))
         cell.accessoryType = .disclosureIndicator
     }
     
@@ -121,8 +129,9 @@ class RaceDetailsVC: UIViewController {
         }
         let fullName = driver.givenName + " " + driver.familyName
         
-        cell.fill(subtitle: time,
-                  text: (position, isBold: true), (fullName, isBold: false), (number, isBold: true))
+        TableViewHelper.updateCell(cell: cell,
+                                   subtitle: time,
+                                   text: (position, isBold: true), (fullName, isBold: false), (number, isBold: true))
     }
     
 }

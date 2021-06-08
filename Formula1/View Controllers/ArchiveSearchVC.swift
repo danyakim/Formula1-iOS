@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 class ArchiveSearchVC: UIViewController {
-
+    
     // MARK: - UIViews
     
     private let pickerView = UIPickerView()
@@ -55,24 +55,31 @@ class ArchiveSearchVC: UIViewController {
         setupAlerts()
         
         setupLabels()
-        setupPickerView()
+        setupReactivePickerView()
         setupPickerViewToolbar()
     }
     
     // MARK: - Setup Views
     
-    private func setupPickerView() {
-        pickerView.dataSource = self
-        pickerView.delegate = self
+    private func setupReactivePickerView() {
+        Observable.just([years, positions])
+            .bind(to: pickerView.rx.items(adapter: YearPositionPickerViewAdapter()))
+            .disposed(by: disposeBag)
         
+        pickerView.rx.modelSelected(String.self).subscribe { model in
+            guard let selectedYearPosition = model.element else { return }
+            self.chosenYear = selectedYearPosition[0]
+            self.chosenPosition = selectedYearPosition[1]
+        }.disposed(by: disposeBag)
+
         yearTextField.inputView = pickerView
         positionTextField.inputView = pickerView
         
         yearTextField.tintColor = .clear
         positionTextField.tintColor = .clear
         
-        pickerView(pickerView, didSelectRow: 0, inComponent: 0)
-        pickerView(pickerView, didSelectRow: 0, inComponent: 1)
+        chosenYear = years.first
+        chosenPosition = positions.first
     }
     
     private func setupPickerViewToolbar() {
@@ -139,44 +146,42 @@ class ArchiveSearchVC: UIViewController {
     
 }
 
-// MARK: - Driver Standings TableView
+// MARK: - DriverStandingsVC
 
-extension ArchiveSearchVC: DriverStandingsTableView { }
+extension ArchiveSearchVC: DriverStandingsVC { }
 
 // MARK: - Picker View
 
-extension ArchiveSearchVC: UIPickerViewDataSource, UIPickerViewDelegate {
+class YearPositionPickerViewAdapter: NSObject,
+                                     UIPickerViewDataSource,
+                                     UIPickerViewDelegate,
+                                     RxPickerViewDataSourceType,
+                                     SectionedViewDataSourceType {
+
+    typealias Element = [[String]]
+    private var items: Element = []
+
+    func model(at indexPath: IndexPath) throws -> Any {
+        items[indexPath.section][indexPath.row]
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        items[component][row]
+    }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 2
+        2
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if component == 0 {
-            return years.count
-        } else {
-            return positions.count
-        }
+        items[component].count
     }
-    
-    func pickerView(_ pickerView: UIPickerView,
-                    titleForRow row: Int,
-                    forComponent component: Int) -> String? {
-        if component == 0 {
-            return years[row]
-        } else {
-            return positions[row]
-        }
+
+    func pickerView(_ pickerView: UIPickerView, observedEvent: Event<Element>) {
+        Binder(self) { adapter, items in
+            adapter.items = items
+            pickerView.reloadAllComponents()
+        }.on(observedEvent)
     }
-    
-    func pickerView(_ pickerView: UIPickerView,
-                    didSelectRow row: Int,
-                    inComponent component: Int) {
-        if component == 0 {
-            chosenYear = years[row]
-        } else {
-            chosenPosition = positions[row]
-        }
-    }
-    
+
 }

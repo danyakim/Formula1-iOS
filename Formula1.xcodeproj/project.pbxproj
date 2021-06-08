@@ -17,13 +17,14 @@
 		3B305BC8266641E300456736 /* RaceDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BC7266641E300456736 /* RaceDetailsVC.swift */; };
 		3B305BCB2666463600456736 /* ErgastAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BCA2666463600456736 /* ErgastAPI.swift */; };
 		3B305BCE26664E8100456736 /* ErgastResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BCD26664E8100456736 /* ErgastResponse.swift */; };
-		3B305BD32666A13900456736 /* UITableViewCellExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BD22666A13900456736 /* UITableViewCellExt.swift */; };
 		3B305BD72667A9F100456736 /* WebPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BD62667A9F100456736 /* WebPageVC.swift */; };
 		3B617A40266BA0EE00FDB9BE /* ArchiveSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B617A3F266BA0EE00FDB9BE /* ArchiveSearchVC.swift */; };
 		3B617A42266BA6E200FDB9BE /* UIStackViewExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B617A41266BA6E200FDB9BE /* UIStackViewExt.swift */; };
 		3B8511D8266BD4AA00CBABF8 /* DriverStandingsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8511D7266BD4AA00CBABF8 /* DriverStandingsVM.swift */; };
 		3B8511DF266CEF8000CBABF8 /* RaceDetailsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8511DE266CEF8000CBABF8 /* RaceDetailsVM.swift */; };
 		3B8511E1266E3F3700CBABF8 /* ViewControllerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8511E0266E3F3700CBABF8 /* ViewControllerExt.swift */; };
+		3B851204266FBA2B00CBABF8 /* DriverStandingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B851203266FBA2B00CBABF8 /* DriverStandingsViewController.swift */; };
+		3B851206266FBDBD00CBABF8 /* TableViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B851205266FBDBD00CBABF8 /* TableViewHelper.swift */; };
 		C42070BF6D6D4903E622DBB3 /* Pods_Formula1.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE5F44F379463E22C6904EB /* Pods_Formula1.framework */; };
 /* End PBXBuildFile section */
 
@@ -40,13 +41,14 @@
 		3B305BC7266641E300456736 /* RaceDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDetailsVC.swift; sourceTree = "<group>"; };
 		3B305BCA2666463600456736 /* ErgastAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgastAPI.swift; sourceTree = "<group>"; };
 		3B305BCD26664E8100456736 /* ErgastResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgastResponse.swift; sourceTree = "<group>"; };
-		3B305BD22666A13900456736 /* UITableViewCellExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewCellExt.swift; sourceTree = "<group>"; };
 		3B305BD62667A9F100456736 /* WebPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPageVC.swift; sourceTree = "<group>"; };
 		3B617A3F266BA0EE00FDB9BE /* ArchiveSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveSearchVC.swift; sourceTree = "<group>"; };
 		3B617A41266BA6E200FDB9BE /* UIStackViewExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStackViewExt.swift; sourceTree = "<group>"; };
 		3B8511D7266BD4AA00CBABF8 /* DriverStandingsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverStandingsVM.swift; sourceTree = "<group>"; };
 		3B8511DE266CEF8000CBABF8 /* RaceDetailsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDetailsVM.swift; sourceTree = "<group>"; };
 		3B8511E0266E3F3700CBABF8 /* ViewControllerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerExt.swift; sourceTree = "<group>"; };
+		3B851203266FBA2B00CBABF8 /* DriverStandingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverStandingsViewController.swift; sourceTree = "<group>"; };
+		3B851205266FBDBD00CBABF8 /* TableViewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHelper.swift; sourceTree = "<group>"; };
 		4320946509D8156A57C4F176 /* Pods-Formula1.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Formula1.debug.xcconfig"; path = "Target Support Files/Pods-Formula1/Pods-Formula1.debug.xcconfig"; sourceTree = "<group>"; };
 		E1308EF03C465FCB0C857B1E /* Pods-Formula1.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Formula1.release.xcconfig"; path = "Target Support Files/Pods-Formula1/Pods-Formula1.release.xcconfig"; sourceTree = "<group>"; };
 		FAE5F44F379463E22C6904EB /* Pods_Formula1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Formula1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +99,7 @@
 				3B305BAC2666390200456736 /* SceneDelegate.swift */,
 				3B305BB82666390500456736 /* Info.plist */,
 				3B305BC92666461E00456736 /* API */,
+				3B851202266FB9EE00CBABF8 /* Protocols */,
 				3B305BCC266647DF00456736 /* Models */,
 				3B617A43266BD44100FDB9BE /* View Models */,
 				3B305BBE266639DF00456736 /* View Controllers */,
@@ -132,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				3B305BC326663DAD00456736 /* Constants.swift */,
+				3B851205266FBDBD00CBABF8 /* TableViewHelper.swift */,
 			);
 			path = Utillities;
 			sourceTree = "<group>";
@@ -155,7 +159,6 @@
 		3B305BD12666A12000456736 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				3B305BD22666A13900456736 /* UITableViewCellExt.swift */,
 				3B8511E0266E3F3700CBABF8 /* ViewControllerExt.swift */,
 				3B617A41266BA6E200FDB9BE /* UIStackViewExt.swift */,
 			);
@@ -169,6 +172,14 @@
 				3B8511DE266CEF8000CBABF8 /* RaceDetailsVM.swift */,
 			);
 			path = "View Models";
+			sourceTree = "<group>";
+		};
+		3B851202266FB9EE00CBABF8 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				3B851203266FBA2B00CBABF8 /* DriverStandingsViewController.swift */,
+			);
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 		6A43721E9B5E69C753C7D7E8 /* Pods */ = {
@@ -314,11 +325,12 @@
 				3B8511DF266CEF8000CBABF8 /* RaceDetailsVM.swift in Sources */,
 				3B8511E1266E3F3700CBABF8 /* ViewControllerExt.swift in Sources */,
 				3B617A40266BA0EE00FDB9BE /* ArchiveSearchVC.swift in Sources */,
+				3B851206266FBDBD00CBABF8 /* TableViewHelper.swift in Sources */,
 				3B8511D8266BD4AA00CBABF8 /* DriverStandingsVM.swift in Sources */,
+				3B851204266FBA2B00CBABF8 /* DriverStandingsViewController.swift in Sources */,
 				3B305BD72667A9F100456736 /* WebPageVC.swift in Sources */,
 				3B305BC426663DAD00456736 /* Constants.swift in Sources */,
 				3B305BC626663F0E00456736 /* WinnersVC.swift in Sources */,
-				3B305BD32666A13900456736 /* UITableViewCellExt.swift in Sources */,
 				3B305BAB2666390200456736 /* AppDelegate.swift in Sources */,
 				3B305BCE26664E8100456736 /* ErgastResponse.swift in Sources */,
 				3B305BCB2666463600456736 /* ErgastAPI.swift in Sources */,
