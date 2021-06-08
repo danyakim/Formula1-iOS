@@ -22,13 +22,15 @@ struct RaceDetailsVM {
     // MARK: - Properties
     
     let sections = PublishSubject<[SectionOfResult]>()
+    private let disposeBag = DisposeBag()
     
     // MARK: - Methods
     
     func getDetails(of race: Race) {
         let titleSection = SectionModel(model: "Race", items: [CellModel.title(race: race)])
         self.sections.onNext([titleSection])
-        ErgastAPI.shared.getResults(of: race) { result in
+        
+        ErgastAPI.shared.getResults(of: race).subscribe { result in
             switch result {
             case .failure(let error):
                 print("*** Error getting race results: ", error)
@@ -41,7 +43,7 @@ struct RaceDetailsVM {
                 let resultsSection = SectionModel(model: "Results", items: results)
                 self.sections.onNext([titleSection, resultsSection])
             }
-        }
+        }.disposed(by: disposeBag)
     }
     
 }

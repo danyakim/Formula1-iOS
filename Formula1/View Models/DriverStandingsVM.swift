@@ -17,23 +17,25 @@ struct DriverStandingsVM {
     var positions: BehaviorRelay<[Position]> = BehaviorRelay(value: [])
     var gotNoResponse: BehaviorRelay<String> = BehaviorRelay(value: "")
     
+    private let disposeBag = DisposeBag()
+    
     // MARK: - Methods
 
     func getCurrentWinners() {
-        ErgastAPI.shared.getCurrentWinners { result in
+        ErgastAPI.shared.getCurrentWinners().subscribe { result in
             parse(result)
-        }
+        }.disposed(by: disposeBag)
     }
     
     func getDrivers(at position: String, year: String) {
-        ErgastAPI.shared.getDrivers(at: position, year: year) { result in
+        ErgastAPI.shared.getDrivers(at: position, year: year).subscribe { result in
             parse(result)
-        }
+        }.disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
     
-    private func parse(_ result: ErgastResult) {
+    private func parse(_ result: Result<PrimitiveSequence<SingleTrait, ErgastResponse>.Element, Error>) {
         switch result {
         case .failure(let error):
             print("*** Error getting drivers: ", error)
