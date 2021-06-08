@@ -34,6 +34,10 @@ class RaceDetailsVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("deinit")
+    }
+    
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
@@ -61,8 +65,11 @@ class RaceDetailsVC: UIViewController {
     }
     
     private func setupDataSource() {
-        let dataSource = RxTableViewSectionedReloadDataSource<SectionOfResult>(configureCell: { _, _, indexPath, cellModel in
+        let dataSource = RxTableViewSectionedReloadDataSource<SectionOfResult>(
+            configureCell: { [weak self] _, _, indexPath, cellModel in
+            
             let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+            guard let self = self else { return cell }
             
             switch cellModel {
             case .title(let race):
