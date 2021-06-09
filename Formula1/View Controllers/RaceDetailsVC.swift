@@ -67,24 +67,24 @@ class RaceDetailsVC: UIViewController {
     private func setupDataSource() {
         let dataSource = RxTableViewSectionedReloadDataSource<SectionOfResult>(
             configureCell: { [weak self] _, _, indexPath, cellModel in
-            
-            let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-            guard let self = self else { return cell }
-            
-            switch cellModel {
-            case .title(let race):
-                self.configureTitle(cell: cell, with: race)
-            case .position(let result):
-                self.configureDriverResult(cell: cell,
-                                           driver: result.driver,
-                                           time: result.time,
-                                           row: indexPath.row)
-            }
-            
-            return cell
-        }, titleForHeaderInSection: { dataSource, index in
-            return dataSource.sectionModels[index].model
-        })
+                
+                guard let self = self else { return UITableViewCell() }
+                let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+                
+                switch cellModel {
+                case .title(let race):
+                    self.configureTitle(cell: cell, with: race)
+                case .position(let result):
+                    self.configureDriverResult(cell: cell,
+                                               driver: result.driver,
+                                               time: result.time,
+                                               row: indexPath.row)
+                }
+                
+                return cell
+            }, titleForHeaderInSection: { dataSource, index in
+                return dataSource.sectionModels[index].model
+            })
         
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         raceDetailsVM.sections.bind(to: tableView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)

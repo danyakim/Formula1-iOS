@@ -12,7 +12,6 @@
 		3B305BB42666390500456736 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B305BB32666390500456736 /* Assets.xcassets */; };
 		3B305BB72666390500456736 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B305BB52666390500456736 /* LaunchScreen.storyboard */; };
 		3B305BC126663CA700456736 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BC026663CA700456736 /* TabBarController.swift */; };
-		3B305BC426663DAD00456736 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BC326663DAD00456736 /* Constants.swift */; };
 		3B305BC626663F0E00456736 /* WinnersVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BC526663F0E00456736 /* WinnersVC.swift */; };
 		3B305BC8266641E300456736 /* RaceDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BC7266641E300456736 /* RaceDetailsVC.swift */; };
 		3B305BCB2666463600456736 /* ErgastAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B305BCA2666463600456736 /* ErgastAPI.swift */; };
@@ -36,7 +35,6 @@
 		3B305BB62666390500456736 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B305BB82666390500456736 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B305BC026663CA700456736 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
-		3B305BC326663DAD00456736 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3B305BC526663F0E00456736 /* WinnersVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WinnersVC.swift; sourceTree = "<group>"; };
 		3B305BC7266641E300456736 /* RaceDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceDetailsVC.swift; sourceTree = "<group>"; };
 		3B305BCA2666463600456736 /* ErgastAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgastAPI.swift; sourceTree = "<group>"; };
@@ -134,7 +132,6 @@
 		3B305BC226663D9B00456736 /* Utillities */ = {
 			isa = PBXGroup;
 			children = (
-				3B305BC326663DAD00456736 /* Constants.swift */,
 				3B851205266FBDBD00CBABF8 /* TableViewHelper.swift */,
 			);
 			path = Utillities;
@@ -329,7 +326,6 @@
 				3B8511D8266BD4AA00CBABF8 /* DriverStandingsVM.swift in Sources */,
 				3B851204266FBA2B00CBABF8 /* DriverStandingsViewController.swift in Sources */,
 				3B305BD72667A9F100456736 /* WebPageVC.swift in Sources */,
-				3B305BC426663DAD00456736 /* Constants.swift in Sources */,
 				3B305BC626663F0E00456736 /* WinnersVC.swift in Sources */,
 				3B305BAB2666390200456736 /* AppDelegate.swift in Sources */,
 				3B305BCE26664E8100456736 /* ErgastResponse.swift in Sources */,

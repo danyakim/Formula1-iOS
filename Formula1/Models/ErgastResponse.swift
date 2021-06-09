@@ -46,18 +46,46 @@ struct ErgastResponse: Codable {
             if let time = result.time?.time {
                 driversResults.append((driver, time))
             } else {
-                var status = result.status
-                if !status.contains("Lap"),
-                   !status.contains("Accident"),
-                   !status.contains("Injured"),
-                   !status.contains("Retired"),
-                   !status.contains("Collision") {
-                    status.append(" issue")
-                }
+                let status = complete(result.status)
                 driversResults.append((driver, status))
             }
         }
         return driversResults
+    }
+    
+    func complete(_ status: String) -> String {
+        let statusCompleted = [
+            "Lap",
+            "Finished",
+            "Disqualified",
+            "Accident",
+            "Spun off",
+            "Retired",
+            "Withdrew",
+            "fire",
+            "Out of fuel",
+            "Injured",
+            "Power loss",
+            "107% Rule",
+            "Did not qualify",
+            "Stalled",
+            "Safety concerns",
+            "Not restarted",
+            "Underweight",
+            "Excluded",
+            "Did not prequalify",
+            "Driver unwell",
+            "Fatal accident",
+            "injury",
+            "damage",
+            "misfire",
+            "Illness",
+            "Collision"
+        ]
+        if !statusCompleted.filter({ status.contains($0) }).isEmpty {
+            return status
+        }
+        return status + " issue"
     }
     
 }
@@ -111,14 +139,9 @@ struct Race: Codable {
 // MARK: - Circuit
 struct Circuit: Codable {
     
-    let circuitID: String
+    let circuitId: String
     let url: String
     let circuitName: String
-    
-    enum CodingKeys: String, CodingKey {
-        case circuitID = "circuitId"
-        case url, circuitName
-    }
     
 }
 
@@ -143,15 +166,10 @@ struct RaceResult: Codable {
 // MARK: - Driver
 struct Driver: Codable {
     
-    let driverID: String
+    let driverId: String
     let permanentNumber: String?
     let url: String
     let givenName, familyName, dateOfBirth, nationality: String
-    
-    enum CodingKeys: String, CodingKey {
-        case driverID = "driverId"
-        case permanentNumber, url, givenName, familyName, dateOfBirth, nationality
-    }
     
 }
 

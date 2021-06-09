@@ -30,19 +30,16 @@ struct RaceDetailsVM {
         let titleSection = SectionModel(model: "Race", items: [CellModel.title(race: race)])
         self.sections.onNext([titleSection])
         
-        ErgastAPI.shared.getResults(of: race).subscribe { result in
-            switch result {
-            case .failure(let error):
-                print("*** Error getting race results: ", error)
-            case .success(let jsonResponse):
-                guard let driversResults = jsonResponse.getDriversResults() else { break }
-                print("*** Got race results")
-                let results = driversResults.map { driverResult in
-                    CellModel.position(result: driverResult)
-                }
-                let resultsSection = SectionModel(model: "Results", items: results)
-                self.sections.onNext([titleSection, resultsSection])
+        ErgastAPI.shared.getResults(of: race).subscribe { ergastResponse in
+            guard let driversResults = ergastResponse.getDriversResults() else { return }
+            print("*** Got race results")
+            let results = driversResults.map { driverResult in
+                CellModel.position(result: driverResult)
             }
+            let resultsSection = SectionModel(model: "Results", items: results)
+            self.sections.onNext([titleSection, resultsSection])
+        } onError: { error in
+            print("*** Error getting race results: ", error)
         }.disposed(by: disposeBag)
     }
     

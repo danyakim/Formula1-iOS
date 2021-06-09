@@ -9,6 +9,13 @@ import UIKit
 
 class TabBarController: UITabBarController {
 
+    // MARK: - tabBarImages
+    
+    let tabBarItem1 = UIImage(systemName: "star.fill") ?? UIImage()
+    let tabBarItem2 = UIImage(systemName: "archivebox") ?? UIImage()
+    
+    // MARK: - View Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,10 +28,10 @@ class TabBarController: UITabBarController {
         viewControllers = [
             createNavigationController(for: WinnersVC(),
                                        title: "Winners",
-                                       image: K.Images.tabBarItem1),
+                                       image: tabBarItem1),
             createNavigationController(for: ArchiveSearchVC(),
                                        title: "Archive",
-                                       image: K.Images.tabBarItem2)
+                                       image: tabBarItem2)
         ]
     }
     

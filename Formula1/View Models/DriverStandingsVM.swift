@@ -20,36 +20,39 @@ struct DriverStandingsVM {
     private let disposeBag = DisposeBag()
     
     // MARK: - Methods
-
+    
     func getCurrentWinners() {
         ErgastAPI.shared.getCurrentWinners().subscribe { result in
             parse(result)
+        } onError: { error in
+            parse(error)
         }.disposed(by: disposeBag)
     }
     
     func getDrivers(at position: String, year: String) {
         ErgastAPI.shared.getDrivers(at: position, year: year).subscribe { result in
             parse(result)
+        } onError: { error in
+            parse(error)
         }.disposed(by: disposeBag)
     }
     
     // MARK: - Private Methods
     
-    private func parse(_ result: Result<PrimitiveSequence<SingleTrait, ErgastResponse>.Element, Error>) {
-        switch result {
-        case .failure(let error):
-            print("*** Error getting drivers: ", error)
-            gotNoResponse.accept("Error")
-        case .success(let jsonResponse):
-            let details = jsonResponse.getPositions()
-            if details.isEmpty {
-                print("*** Got empty response")
-                gotNoResponse.accept("No Results")
-            } else {
-                print("*** Got response")
-            }
-            self.positions.accept(details)
+    private func parse(_ response: ErgastResponse) {
+        let details = response.getPositions()
+        if details.isEmpty {
+            print("*** Got empty response")
+            gotNoResponse.accept("No Results")
+        } else {
+            print("*** Got response")
         }
+        self.positions.accept(details)
+    }
+    
+    private func parse(_ error: Error) {
+        print("*** Error getting drivers: ", error)
+        gotNoResponse.accept("Error")
     }
     
 }

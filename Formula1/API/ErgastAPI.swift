@@ -7,15 +7,15 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 enum APIError: Error {
-    
-    case incorrectURL(String)
+    case incorrectResponse
     case noData
     case errorParsingJSON
 }
 
-typealias ErgastResult = Single<ErgastResponse>
+typealias ErgastResult = Observable<ErgastResponse>
 
 class ErgastAPI {
     
@@ -45,32 +45,23 @@ class ErgastAPI {
     // MARK: - Private Methods
     
     private func fetchData(from urlString: String) -> ErgastResult {
+        guard let url = URL(string: urlString) else {
+            fatalError("*** Can't create url from string: '\(urlString)'")
+        }
         
-        return ErgastResult.create { single in
-            guard let url = URL(string: urlString) else {
-                single(.failure(APIError.incorrectURL(urlString)))
-                return Disposables.create()
-            }
-            
-            let task = URLSession.shared.dataTask(with: url) { data, _, error in
-                if let error = error {
-                    return single(.failure(error))
+        return URLSession.shared.rx.response(request: URLRequest(url: url))
+            .map { result in
+                guard result.response.statusCode == 200 else {
+                    throw APIError.noData
                 }
                 
-                guard let data = data else {
-                    return single(.failure(APIError.noData))
-                }
-                
+                let data = result.data
                 let decoder = JSONDecoder()
                 if let jsonResponse = try? decoder.decode(ErgastResponse.self, from: data) {
-                    return single(.success(jsonResponse))
+                    return jsonResponse
                 }
-                return single(.failure(APIError.errorParsingJSON))
-            }
-            task.resume()
-            
-            return Disposables.create { task.cancel() }
-        }
+                throw APIError.errorParsingJSON
+            }.asObservable()
     }
     
 }
